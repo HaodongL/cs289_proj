@@ -31,20 +31,35 @@ def initialize_sl(stack, name = None, params = None):
         params = params
     )
 
+def square_error_loss(y_hat, y):
+    return np.sum((y_hat - y)^2)/len(y)
+
+def binomial_loglik_loss(y_hat, y):
+    return np.sum(y*np.log(y_hat) + (1 - y)*np.log(1-y_hat))/len(y)
 
 
 class Lrnr_sl(Learner):
-    def __init__(self, stack: list, name = None, params = None):
+    def __init__(self, stack: list, meta: str , name = None, params = None):
         super().__init__(name = name, params = params)
         self.stack = stack
         self.folds = list(self.sl_task.cv_folds.split(self.sl_task.data["Y"]))
-        self.preds = None
+        self.n = len(self.sl_task.data["Y"])
+        self.n_l = len(stack)
+        self.n_k = len(folds)
+        self.preds = np.zeros((self.n, self.l))
         self.fit_object_list = []
+        self.meta = meta
+
+        if (self.sl_task.family == 'Gaussian'):
+            self.loss_f = square_error_loss
+        elif (self.sl_task.family == 'Binomial'):
+            self.loss_f = binomial_loglik_loss
 
 
     def train(self) -> None:
-        """Fit each learner on each training set,
-           save the predictions on each v set
+        """ 1. evaluate learners by cv risk
+            2. discrete or meta learning
+            3. fit the best learner(s) on full data
         
         Parameters
         ----------
@@ -54,7 +69,10 @@ class Lrnr_sl(Learner):
         -------
         None
         """
-        for k in range(len(self.folds)):
+
+        # Step 1. calc cv risk by fitting each learner on t and preds on v
+        for k in range(self.n_k):
+            print("Training on Fold", k+1, "of", n_k, "\n")
             idx_t = self.folds[k][0]
             idx_v = self.folds[k][1]
             X_t = self.sl_task.data["X"][idx_t]
@@ -62,10 +80,23 @@ class Lrnr_sl(Learner):
             X_v = self.sl_task.data["X"][idx_v]
             Y_v = self.sl_task.data["Y"][idx_v]
 
-            for l in range(len(self.stack)):
+            for l in range(self.n_l):
                 lrnr = self.stack[l]
                 fit_lrnr = lrnr.train(Y_t, X_t, family = lrnr.family).fit()
                 preds = fit_lrnr(X_v)
+                # save preds 
+                self.preds[idx_v, l] = preds
+
+        # calc risk
+        Y = self.sl_task.data["Y"]
+        cv_risk = [self.loss_f(self.preds[:, l], Y) for l in range(self.n_l)]
+
+        # Step 2. discrete or meta learning
+        if (self.meta == "discrete"):
+            l_star = np.argmin(cv_risk)
+
+        # Step 3. fit the best learner(s) on full data
+        
 
 
 
