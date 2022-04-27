@@ -7,7 +7,7 @@ from sklearn.model_selection import KFold
 
 
 class Learner(ABC):
-    """Abstract class defining the common interface for all Learner methods."""
+    """abstract class defining the common interface for all Learner methods."""
     def __init__(self, name = None, params = None, *args):
         self.name = name
         self.params = params
@@ -23,10 +23,11 @@ class Learner(ABC):
         pass
 
 
-def initialize_sl(stack, name = None, params = None):
+def initialize_sl(stack, meta, name = None, params = None):
 
     return Lrnr_sl(
         stack = stack,
+        meta = meta,
         name = name,
         params = params
     )
@@ -104,7 +105,7 @@ class Lrnr_sl(Learner):
 
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        """Backward pass for f(z) = z.
+        """predict with new X
         
         Parameters
         ----------
@@ -129,7 +130,7 @@ class Lrnr_glm(Learner):
             self.family = sm.families.Binomial()
 
     def train(self, Y: np.ndarray, X: np.ndarray) -> None:
-        """Fit model with training set
+        """fit model with training set
         
         Parameters
         ----------
@@ -145,7 +146,7 @@ class Lrnr_glm(Learner):
 
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        """Backward pass for f(z) = z.
+        """predict with new X
         
         Parameters
         ----------
