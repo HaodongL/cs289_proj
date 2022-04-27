@@ -35,7 +35,7 @@ def square_error_loss(y_hat, y):
     return np.sum((y_hat - y)^2)/len(y)
 
 def binomial_loglik_loss(y_hat, y):
-    return np.sum(y*np.log(y_hat) + (1 - y)*np.log(1-y_hat))/len(y)
+    return -np.sum(y*np.log(y_hat) + (1 - y)*np.log(1-y_hat))/len(y)
 
 
 class Lrnr_sl(Learner):
@@ -96,7 +96,7 @@ class Lrnr_sl(Learner):
             l_star = np.argmin(cv_risk)
 
         # Step 3. fit the best learner(s) on full data
-        
+
 
 
 
