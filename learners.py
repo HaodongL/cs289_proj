@@ -28,9 +28,9 @@ class Lrnr_glm(Learner):
     def __init__(self):
         super().__init__()
         family = self.sl_task.family
-        if (family == 'Gaussian'):
+        if (family == "Gaussian"):
             self.family = sm.families.Gaussian()
-        elif (family == 'Binomial'):
+        elif (family == "Binomial"):
             self.family = sm.families.Binomial()
 
     def train(self, Y: np.ndarray, X: np.ndarray) -> None:
