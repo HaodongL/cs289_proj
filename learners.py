@@ -17,7 +17,6 @@ class Learner(ABC):
         self.sl_task = sl_task
         self.fit_object = None
         
-
     @abstractmethod
     def train(self, Z):
         pass
@@ -27,9 +26,10 @@ class Learner(ABC):
         pass
 
 
-def initialize_sl(stack, meta, name = None, params = None):
+def initialize_sl(sl_task, stack, meta, name = None, params = None):
 
     return Lrnr_sl(
+        sl_task = sl_task,
         stack = stack,
         meta = meta,
         name = name,
