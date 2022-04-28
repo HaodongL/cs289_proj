@@ -9,11 +9,12 @@ from scipy.optimize import nnls
 
 class Learner(ABC):
     """abstract class defining the common interface for all Learner methods."""
-    def __init__(self, name = None, params = None, *args):
+    def __init__(self, sl_task, name = None, params = None, *args):
         self.name = name
         self.params = params
-        self.fit_object = None,
-        self.sl_task = None,
+        self.sl_task = sl_task
+        self.fit_object = None
+        
 
     @abstractmethod
     def train(self, Z):
@@ -42,7 +43,7 @@ def binomial_loglik_loss(y_hat, y):
 
 
 class Lrnr_sl(Learner):
-    def __init__(self, stack: list, meta: str , name = None, params = None):
+    def __init__(self, sl_task: sl_task, stack: list, meta: str , name = None, params = None):
         super().__init__(name = name, params = params)
         self.stack = stack
         self.folds = list(self.sl_task.cv_folds.split(self.sl_task.data["Y"]))
@@ -89,7 +90,7 @@ class Lrnr_sl(Learner):
 
             for l in range(self.n_l):
                 lrnr = self.stack[l]
-                lrnr.train(Y_t, X_t, family = lrnr.family)
+                lrnr.train(Y_t, X_t)
                 preds = lrnr.predict(X_v)
                 # save preds 
                 self.preds[idx_v, l] = preds
@@ -111,7 +112,7 @@ class Lrnr_sl(Learner):
         # Step 3. fit learners on full data, save
         for l in range(self.n_l):
                 lrnr = self.stack[l]
-                lrnr.train(Y, X, family = lrnr.family)
+                lrnr.train(Y, X)
 
         self.is_trained = True
 
@@ -142,7 +143,7 @@ class Lrnr_sl(Learner):
 
 
 class Lrnr_glm(Learner):
-    def __init__(self, name = None, params = None):
+    def __init__(self, sl_task: sl_task, name = None, params = None):
         super().__init__(name = name, params = params)
         family = self.sl_task.family
         if (family == "Gaussian"):
@@ -164,7 +165,6 @@ class Lrnr_glm(Learner):
         """
         model = sm.GLM(Y, X, family = self.family)
         self.fit_object = model.fit()
-
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """predict with new X
