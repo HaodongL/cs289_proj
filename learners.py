@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 import statsmodels.api as sm
 from sklearn.model_selection import KFold
 from scipy.optimize import nnls
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 
 
 class Learner(ABC):
@@ -165,6 +167,54 @@ class Lrnr_glm(Learner):
         """
         model = sm.GLM(Y, X, family = self.family)
         self.fit_object = model.fit()
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        """predict with new X
+        
+        Parameters
+        ----------
+        X (new) input features for prediction
+
+        Returns
+        -------
+        predictons
+        """
+        fit = self.fit_object
+        preds = fit.predict(X)
+        return preds
+
+
+class Lrnr_rf(Learner):
+    def __init__(self, sl_task: sl_task, name = None, params = [3, None, 2]):
+        super().__init__(name = name, params = params)
+        self.max_depth = params[0]
+        self.random_state = params[1]
+        self.min_samples_split = params[2]
+        
+
+    def train(self, Y: np.ndarray, X: np.ndarray) -> None:
+        """fit model with training set
+        
+        Parameters
+        ----------
+        Y  response varible / labels
+        X  features
+
+        Returns
+        -------
+        None
+        """
+        family = self.sl_task.family
+        if (family == "Binomial"):
+            model = RandomForestClassifier(max_depth = self.max_depth, 
+                                           random_state = self.random_state,
+                                           min_samples_split = self.min_samples_split)
+        elif (family == "Gaussian"):
+            model = RandomForestRegressor(max_depth = self.max_depth, 
+                                          random_state = self.random_state,
+                                          min_samples_split = self.min_samples_split)
+
+        self.fit_object = model.fit(X, Y)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """predict with new X
