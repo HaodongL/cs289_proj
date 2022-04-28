@@ -97,7 +97,7 @@ class Lrnr_sl(Learner):
 
         # save risk
         X = self.sl_task.data["X"]
-        Y = self.sl_task.data["Y"]
+        Y = self.sl_task.data["Y"].ravel()
         cv_risk = [self.loss_f(self.preds[:, l], Y) for l in range(self.n_l)]
         self.cv_risk = cv_risk
 
