@@ -7,6 +7,7 @@ from sklearn.model_selection import KFold
 from scipy.optimize import nnls
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
+import pysolnp
 
 
 class Learner(ABC):
@@ -107,9 +108,33 @@ class Lrnr_sl(Learner):
         if (self.meta == "discrete"):
             l_star = np.argmin(cv_risk)
             self.wt_meta[l_star] = 1
+
         elif (self.meta == "nnls"):
             res_meta = nnls(self.preds, Y)
             self.wt_meta = res_meta[0]
+            
+        elif (self.meta == "solnp"):
+            Z = self.preds
+            # for simplicity, we just use linear
+            # can be non-linear in general
+            meta_linear = lambda b: Z @ b 
+            obj_func = lambda b: self.loss_f(meta_linear(b), Y)
+            eq_func = lambda b: np.sum(b)
+            b0 = [1/self.n_l]*self.n_l
+            bl = [0]*self.n_l
+            bu = [1]*self.n_l
+            eq_values = [1]
+
+            res_meta = pysolnp.solve(
+                obj_func = obj_func,
+                par_start_value = b0,
+                par_lower_limit = bl,
+                par_upper_limit = bu,
+                eq_func = eq_func,
+                eq_values = eq_values)
+
+            self.wt_meta = np.array(res_meta.optimum)
+
 
         # Step 3. fit learners on full data, save
         for l in range(self.n_l):
@@ -138,8 +163,8 @@ class Lrnr_sl(Learner):
             lrnr = self.stack[l]
             preds[:, l] = lrnr.predict(X)
 
-        wt = self.wt_meta.reshape((1,self.n_l))
-        preds =  np.sum(preds*wt, axis = 1)
+        wt = self.wt_meta.reshape((self.n_l, 1))
+        preds =  preds @ wt
 
         return preds
 
