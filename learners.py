@@ -3,11 +3,13 @@
 import numpy as np
 from abc import ABC, abstractmethod
 import statsmodels.api as sm
+from statsmodels.regression.linear_model import OLS
 from sklearn.model_selection import KFold
 from scipy.optimize import nnls
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 import pysolnp
+
 
 
 class Learner(ABC):
@@ -112,7 +114,7 @@ class Lrnr_sl(Learner):
         elif (self.meta == "nnls"):
             res_meta = nnls(self.preds, Y)
             self.wt_meta = res_meta[0]
-            
+
         elif (self.meta == "solnp"):
             Z = self.preds
             # for simplicity, we just use linear
@@ -163,7 +165,7 @@ class Lrnr_sl(Learner):
             lrnr = self.stack[l]
             preds[:, l] = lrnr.predict(X)
 
-        wt = self.wt_meta.reshape((self.n_l, 1))
+        wt = self.wt_meta
         preds =  preds @ wt
 
         return preds
@@ -192,6 +194,44 @@ class Lrnr_glm(Learner):
         """
         model = sm.GLM(Y, X, family = self.family)
         self.fit_object = model.fit()
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        """predict with new X
+        
+        Parameters
+        ----------
+        X (new) input features for prediction
+
+        Returns
+        -------
+        predictons
+        """
+        fit = self.fit_object
+        preds = fit.predict(X)
+        return preds
+
+
+class Lrnr_glmnet(Learner):
+    # Lasso when L1_wt = 1, ridge when L1_wt = 0, elasticnet when L1_wt = 0.5
+    def __init__(self, sl_task: sl_task, name = None, params = [1, 1e-2]):
+        super().__init__(name = name, params = params)
+        self.L1_wt = params[0]
+        self.Lambda = params[1]
+
+    def train(self, Y: np.ndarray, X: np.ndarray) -> None:
+        """fit model with training set
+        
+        Parameters
+        ----------
+        Y  response varible / labels
+        X  features
+
+        Returns
+        -------
+        None
+        """
+        model = OLS(Y, X)
+        self.fit_object = model.fit_regularized(alpha = self.Lambda, L1_wt = self.L1_wt)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """predict with new X
