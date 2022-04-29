@@ -9,6 +9,7 @@ from scipy.optimize import nnls
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 import pysolnp
+import xgboost as xgb
 
 
 
@@ -280,6 +281,63 @@ class Lrnr_rf(Learner):
                                           min_samples_split = self.min_samples_split)
 
         self.fit_object = model.fit(X, Y)
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        """predict with new X
+        
+        Parameters
+        ----------
+        X (new) input features for prediction
+
+        Returns
+        -------
+        predictons
+        """
+        fit = self.fit_object
+        preds = fit.predict(X)
+        return preds
+
+
+class Lrnr_xgboost(Learner):
+    def __init__(self, sl_task: sl_task, num_round: int, name = None, params = [3, 1e-1, 100, 1, 1]):
+        super().__init__(name = name, params = params)
+        self.n_round = num_round
+        self.max_depth = params[0]
+        self.learning_rate = params[1]
+        self.n_estimators = params[2]
+        self.subsample = params[3]
+        self.colsample_bytree = params[4]
+        
+    def train(self, Y: np.ndarray, X: np.ndarray) -> None:
+        """fit model with training set
+        
+        Parameters
+        ----------
+        Y  response varible / labels
+        X  features
+
+        Returns
+        -------
+        None
+        """
+        family = self.sl_task.family
+        if (family == "Gaussian"):
+            objective = "reg:squarederror"
+        elif (family == "Binomial"):
+            objective = "binary:logistic"
+
+        dtrain = xgb.DMatrix(data = X,label = Y.ravel())
+
+        xgb_params = {'objective': objective,
+                      'learning_rate': self.learning_rate,
+                      'max_depth': self.max_depth,
+                      'n_estimators': self.n_estimators,
+                      'subsample': self.subsample,
+                      'colsample_bytree': self.colsample_bytree}
+
+        self.fit_object = xgb.train(params = xgb_params, 
+                                    dtrain = dtrain, 
+                                    num_round = self.n_round)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """predict with new X
