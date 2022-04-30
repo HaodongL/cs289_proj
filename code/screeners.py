@@ -8,7 +8,7 @@ from sklearn.feature_selection import chi2, f_regression
 # predict the selected features of new input X.
 
 class Screener(Learner):
-    def __init__(self, sl_task: sl_task, learners: list, name = None, params = None):
+    def __init__(self, sl_task: sl_task, name = None, params = None):
         super().__init__(name = name, params = params)
         self.learners = learners
 
@@ -102,8 +102,8 @@ class Screen_univar(Screener):
         """
         # assume X has the same shape and order of features 
         # as the original X
-        self.X_star = X[:, self.i_star]
-        return self.X_star
+        X_star = X[:, self.i_star]
+        return X_star
 
     def chain(self) -> None:
         """output for next learner
