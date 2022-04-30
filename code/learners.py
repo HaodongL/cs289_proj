@@ -22,11 +22,15 @@ class Learner(ABC):
         self.fit_object = None
         
     @abstractmethod
-    def train(self, Z):
+    def train(self, Y: np.ndarray, X: np.ndarray):
         pass
 
     @abstractmethod
-    def predict(self, Z):
+    def chain(self):
+        pass
+
+    @abstractmethod
+    def predict(self, X: np.ndarray):
         pass
 
 
@@ -57,7 +61,6 @@ class Lrnr_sl(Learner):
         self.n_l = len(stack)
         self.n_k = len(folds)
         self.preds = np.zeros((self.n, self.n_l))
-        self.fit_object_list = []
         self.meta = meta
         self.wt_meta = np.zeros((1, self.n_l))[0]
         self.cv_risk = None
@@ -171,6 +174,20 @@ class Lrnr_sl(Learner):
 
         return preds
 
+    def chain(self) -> None:
+        # For simplicity, skip this part for now.
+        """output for next learner
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        pass
+
 
 class Lrnr_glm(Learner):
     def __init__(self, sl_task: sl_task, name = None, params = None):
@@ -211,6 +228,20 @@ class Lrnr_glm(Learner):
         preds = fit.predict(X)
         return preds
 
+    def chain(self) -> None:
+        # For simplicity, skip this part for now.
+        """output for next learner
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        pass
+
 
 class Lrnr_glmnet(Learner):
     # Lasso when L1_wt = 1, ridge when L1_wt = 0, elasticnet when L1_wt = 0.5
@@ -248,6 +279,20 @@ class Lrnr_glmnet(Learner):
         fit = self.fit_object
         preds = fit.predict(X)
         return preds
+
+    def chain(self) -> None:
+        # For simplicity, skip this part for now.
+        """output for next learner
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        pass
 
 
 class Lrnr_rf(Learner):
@@ -296,6 +341,20 @@ class Lrnr_rf(Learner):
         fit = self.fit_object
         preds = fit.predict(X)
         return preds
+
+    def chain(self) -> None:
+        # For simplicity, skip this part for now.
+        """output for next learner
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        pass
 
 
 class Lrnr_xgboost(Learner):
@@ -353,3 +412,17 @@ class Lrnr_xgboost(Learner):
         fit = self.fit_object
         preds = fit.predict(X)
         return preds
+
+    def chain(self) -> None:
+        # For simplicity, skip this part for now.
+        """output for next learner
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        pass
