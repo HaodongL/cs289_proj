@@ -1,4 +1,5 @@
-
+import numpy as np
+import sl_task
 from code.learners import Learner
 
 # A pipeline is a learner that chain two or more learners
@@ -8,7 +9,7 @@ from code.learners import Learner
 
 class Pipeline(Learner):
     def __init__(self, sl_task: sl_task, learners: list, name = None, params = None):
-        super().__init__(name = name, params = params)
+        super().__init__(sl_task = sl_task, name = name, params = params)
         self.learners = learners
 
     def train(self, Y: np.ndarray, X: np.ndarray) -> None:
