@@ -25,18 +25,19 @@ def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):
             Y_v = Y[idx_v]
 
             current_task = sl_task(X_t, Y_t, family, K2)
-            current_sl = initialize_sl(sl_task, stack, meta)
+            current_sl = initialize_sl(current_task, stack, meta)
             current_sl.train()
             sl_list.append(current_sl)
 
-	# permute each col, predit on each v set
-	cv_risks = np.zeros(p)
-    for j in range(p):
-    	X_c = np.copy(X)
-    	X_c[:,j] = np.random.permutation(X[:,j])
+    # permute each col, predit on each v set
+    cv_risks = np.zeros(p)
 
-    	cv_preds = np.zeros(n)
-    	for i in range(K1):
+    for j in range(p):
+        X_c = np.copy(X)
+        X_c[:,j] = np.random.permutation(X[:,j])
+        cv_preds = np.zeros(n)
+
+        for i in range(K1):
             idx_v = folds[k][1]
             X_v = X[idx_v]
             Y_v = Y[idx_v]
@@ -53,6 +54,8 @@ def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):
     out[:, 2] = cv_risks
     out = out[[:, 2].argsort()]
     return out
+
+
 
 
 
