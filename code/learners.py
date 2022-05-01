@@ -54,12 +54,12 @@ def binomial_loglik_loss(y_hat, y):
 
 class Lrnr_sl(Learner):
     def __init__(self, sl_task: sl_task, stack: list, meta: str , name = None, params = None):
-        super().__init__(name = name, params = params)
+        super().__init__(sl_task = sl_task, name = name, params = params)
         self.stack = stack
         self.folds = list(self.sl_task.cv_folds.split(self.sl_task.data["Y"]))
         self.n = len(self.sl_task.data["Y"])
         self.n_l = len(stack)
-        self.n_k = len(folds)
+        self.n_k = len(self.folds)
         self.preds = np.zeros((self.n, self.n_l))
         self.meta = meta
         self.wt_meta = np.zeros((1, self.n_l))[0]
@@ -89,7 +89,7 @@ class Lrnr_sl(Learner):
 
         # Step 1. calc cv risk by fitting each learner on t and preds on v
         for k in range(self.n_k):
-            print("Training on Fold", k+1, "of", n_k, "\n")
+            print("Training on Fold", k+1, "of", self.n_k, "\n")
             idx_t = self.folds[k][0]
             idx_v = self.folds[k][1]
             X_t = self.sl_task.data["X"][idx_t]
@@ -191,7 +191,7 @@ class Lrnr_sl(Learner):
 
 class Lrnr_glm(Learner):
     def __init__(self, sl_task: sl_task, name = None, params = None):
-        super().__init__(name = name, params = params)
+        super().__init__(sl_task = sl_task, name = name, params = params)
         family = self.sl_task.family
         if (family == "Gaussian"):
             self.family = sm.families.Gaussian()
@@ -246,7 +246,7 @@ class Lrnr_glm(Learner):
 class Lrnr_glmnet(Learner):
     # Lasso when L1_wt = 1, ridge when L1_wt = 0, elasticnet when L1_wt = 0.5
     def __init__(self, sl_task: sl_task, name = None, params = [1, 1e-2]):
-        super().__init__(name = name, params = params)
+        super().__init__(sl_task = sl_task, name = name, params = params)
         self.L1_wt = params[0]
         self.Lambda = params[1]
 
@@ -297,7 +297,7 @@ class Lrnr_glmnet(Learner):
 
 class Lrnr_rf(Learner):
     def __init__(self, sl_task: sl_task, name = None, params = [3, None, 2]):
-        super().__init__(name = name, params = params)
+        super().__init__(sl_task = sl_task, name = name, params = params)
         self.max_depth = params[0]
         self.random_state = params[1]
         self.min_samples_split = params[2]
@@ -359,7 +359,7 @@ class Lrnr_rf(Learner):
 
 class Lrnr_xgboost(Learner):
     def __init__(self, sl_task: sl_task, num_round: int, name = None, params = [3, 1e-1, 100, 1, 1]):
-        super().__init__(name = name, params = params)
+        super().__init__(sl_task = sl_task, name = name, params = params)
         self.n_round = num_round
         self.max_depth = params[0]
         self.learning_rate = params[1]
