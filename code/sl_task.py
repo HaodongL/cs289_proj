@@ -1,10 +1,9 @@
 import numpy as np
-from abc import ABC, abstractmethod
 from sklearn.model_selection import KFold
 
 
-class sl_task(ABC):
-    def __init__(self, X, Y, family, cv_folds: KFold):
+class sl_task:
+    def __init__(self, X, Y, family, K: int):
         self.data = {"X": X, "Y": Y}
         self.family = family
-        self.cv_folds = cv_folds
+        self.cv_folds = KFold(n_splits = K)
