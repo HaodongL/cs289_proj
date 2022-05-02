@@ -3,13 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="95044379-1737-4691-9eb8-63bbfd52a52c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cloud_data/image1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cloud_data/image2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cloud_data/image3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cloud_data/image_data.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/cloud_data/lab4_instructions.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/wash_data/info.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/wash_data/wash_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/data_process.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/data_process.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +69,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1651376956434</updated>
-      <workItem from="1651376957875" duration="24235000" />
+      <workItem from="1651376957875" duration="28788000" />
     </task>
     <servers />
   </component>
@@ -93,6 +88,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/cs289_proj$test.coverage" NAME="test Coverage Results" MODIFIED="1651445316065" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/code" />
+    <SUITE FILE_PATH="coverage/cs289_proj$test.coverage" NAME="test Coverage Results" MODIFIED="1651450096148" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/code" />
   </component>
 </project>

@@ -1,10 +1,6 @@
 """
 data processing
-a) drop features if majority values are missing
-b) impute missingness with
-   median (for continuous features) and
-   mode (for discrete features) and create an indicator variable for each imputed feature
-c) one hot code
+simply call the data_prep_task function
 
 """
 import numpy as np
@@ -14,11 +10,47 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+def data_prep_task(name: str, test_size=0.2):
+    """
+    Function to perform data pre-processing.
+
+    Input:
+        name (str): {'cloud', 'wash'}
+        test_size
+
+    Return value: X_train, X_test, y_train, y_test
+    """
+    d_prep = DataPreProcessing(name)
+    if name == 'cloud':
+        d_prep.label_name = 'expert label'
+        d_prep.drop_features(drop_cols=['y', 'x'])
+        # d_prep.standardize()
+        print('Data pre-processing is finished.')
+        return d_prep.split(test_size=test_size)
+
+    elif name == 'wash':
+        d_prep.label_name = 'whz'
+        d_prep.drop_features(threshold=0.5)
+
+        d_prep.categorical.impute()
+        # print(d_prep.categorical.indicator.dtypes)
+        d_prep.disc_numerical.impute()
+        # print(d_prep.disc_numerical.indicator.dtypes)
+        d_prep.disc_numerical.disc_to_cont()
+        d_prep.cont_numerical.impute()
+        # print(d_prep.cont_numerical.indicator.dtypes)
+
+        d_prep.standarize()
+        print('Data pre-processing is finished.')
+        return d_prep.split(test_size=test_size)
+
+    else:
+        raise NotImplementedError
 
 class DataPreProcessing:
     """
     Attributes:
-        path (str)
+        name (str): {'cloud', 'wash'}
         family (str): {"Binomial", "Gaussian"}
         df (DataFrame)
         label_name (str)
@@ -27,10 +59,8 @@ class DataPreProcessing:
         cont_numerical (ContinuousNumericalFeatures)
     """
 
-    def __init__(self, path: str, family: str):
-        self.path = path
-        self.family = family
-        self.df = load_dataframe(path)
+    def __init__(self, name: str):
+        self.df, self.family = load_dataframe(name)
         self.label_name = None
         self.categorical = CategoricalFeatures(self)
         self.cont_numerical = ContinuousNumericalFeatures(self)
@@ -46,6 +76,9 @@ class DataPreProcessing:
     def get_numerical(self):
         return [col for col in list(self.df.columns)
                 if (self.df[col].dtype in ['float64', 'int64', 'int32']) and self.label_name != col]
+
+    def missing_values(self):
+        return self.df.isnull().sum()
 
     def standarize(self):
         self.df[self.get_numerical()] = pd.DataFrame(StandardScaler().fit_transform(self.df[self.get_numerical()]))
@@ -68,8 +101,19 @@ class DataPreProcessing:
             self.df = self.df.drop(drop_cols, axis=1)
 
 
-def load_dataframe(path):
-    return pd.read_csv(path, index_col=0)
+def load_dataframe(name: str):
+    if name == 'wash':
+        df = pd.read_csv('data/wash_data/wash_data.csv', index_col=0)
+        family = 'Gaussian'
+        return df, family
+    elif name == 'cloud':
+        df = pd.read_csv('data/cloud_data/image2.txt', sep=' ', header=None,
+                         names=['y', 'x', 'expert label',
+                                'NDAI', 'SD', 'CORR', 'DF', 'CF', 'BF', 'AF', 'AN'])
+        family = 'Binomial'
+        return df, family
+    else:
+        raise NotImplementedError
 
 
 class ContinuousNumericalFeatures:
