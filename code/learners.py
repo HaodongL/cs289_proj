@@ -132,7 +132,7 @@ class Lrnr_sl(Learner):
             # can be non-linear in general
             meta_linear = lambda b: Z @ b 
             obj_func = lambda b: self.loss_f(meta_linear(b), Y)
-            eq_func = lambda b: np.sum(b)
+            eq_func = lambda b: [np.sum(b)]
             b0 = [1/self.n_l]*self.n_l
             bl = [0]*self.n_l
             bu = [1]*self.n_l
