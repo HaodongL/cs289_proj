@@ -76,9 +76,9 @@ class Screen_univar(Screener):
         None
         """
         family = self.sl_task.family
-        if (family == "Gaussian"):
+        if family == "Gaussian":
             stats_test = f_regression
-        elif (family == "Binomial"):
+        elif family == "Binomial":
             stats_test = chi2
         
         screener = SelectKBest(stats_test, k = self.k)

@@ -68,9 +68,9 @@ class Lrnr_sl(Learner):
         self.cv_risk = None
         self.is_trained = False
 
-        if (self.sl_task.family == 'Gaussian'):
+        if self.sl_task.family == 'Gaussian':
             self.loss_f = square_error_loss
-        elif (self.sl_task.family == 'Binomial'):
+        elif self.sl_task.family == 'Binomial':
             self.loss_f = binomial_loglik_loss
 
         lrnr_names = []
@@ -91,7 +91,7 @@ class Lrnr_sl(Learner):
         -------
         None
         """
-        if (self.is_trained):
+        if self.is_trained:
             raise Exception("This SL is already trained")
 
         # Step 1. calc cv risk by fitting each learner on t and preds on v
@@ -118,15 +118,15 @@ class Lrnr_sl(Learner):
         self.cv_risk = cv_risk
 
         # Step 2. discrete or meta learning, save
-        if (self.meta == "discrete"):
+        if self.meta == "discrete":
             l_star = np.argmin(cv_risk)
             self.wt_meta[l_star] = 1
 
-        elif (self.meta == "nnls"):
+        elif self.meta == "nnls":
             res_meta = nnls(self.preds, Y)
             self.wt_meta = res_meta[0]
 
-        elif (self.meta == "solnp"):
+        elif self.meta == "solnp":
             Z = self.preds
             # for simplicity, we just use linear
             # can be non-linear in general
@@ -167,7 +167,7 @@ class Lrnr_sl(Learner):
         -------
         predictons
         """
-        if (X is None):
+        if X is None:
             X = self.sl_task.data["X"]
 
         preds = np.zeros((len(X), self.n_l))
@@ -216,9 +216,9 @@ class Lrnr_glm(Learner):
     def __init__(self, sl_task: sl_task, name = "glm", params = None):
         super().__init__(sl_task = sl_task, name = name, params = params)
         family = self.sl_task.family
-        if (family == "Gaussian"):
+        if family == "Gaussian":
             self.family = sm.families.Gaussian()
-        elif (family == "Binomial"):
+        elif family == "Binomial":
             self.family = sm.families.Binomial()
 
     def train(self, Y: np.ndarray, X: np.ndarray) -> None:
@@ -339,11 +339,11 @@ class Lrnr_rf(Learner):
         None
         """
         family = self.sl_task.family
-        if (family == "Binomial"):
+        if family == "Binomial":
             model = RandomForestClassifier(max_depth = self.max_depth, 
                                            random_state = self.random_state,
                                            min_samples_split = self.min_samples_split)
-        elif (family == "Gaussian"):
+        elif family == "Gaussian":
             model = RandomForestRegressor(max_depth = self.max_depth, 
                                           random_state = self.random_state,
                                           min_samples_split = self.min_samples_split)
@@ -403,9 +403,9 @@ class Lrnr_xgboost(Learner):
         None
         """
         family = self.sl_task.family
-        if (family == "Gaussian"):
+        if family == "Gaussian":
             objective = "reg:squarederror"
-        elif (family == "Binomial"):
+        elif family == "Binomial":
             objective = "binary:logistic"
 
         dtrain = xgb.DMatrix(data = X,label = Y.ravel())
