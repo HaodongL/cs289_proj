@@ -1,6 +1,7 @@
 
 from sl_task import sl_task
 import numpy as np
+import pandas as pd
 from abc import ABC, abstractmethod
 import statsmodels.api as sm
 from statsmodels.regression.linear_model import OLS
@@ -58,6 +59,7 @@ class Lrnr_sl(Learner):
         self.stack = stack
         self.folds = list(self.sl_task.cv_folds.split(self.sl_task.data["Y"]))
         self.n = len(self.sl_task.data["Y"])
+        self.p = self.sl_task.data["X"].shape[1]
         self.n_l = len(stack)
         self.n_k = len(self.folds)
         self.preds = np.zeros((self.n, self.n_l))
@@ -70,6 +72,11 @@ class Lrnr_sl(Learner):
             self.loss_f = square_error_loss
         elif (self.sl_task.family == 'Binomial'):
             self.loss_f = binomial_loglik_loss
+
+        lrnr_names = []
+        for lrnr in stack:
+            lrnr_names.append(lrnr.name)
+        self.lrnr_names = lrnr_names
 
     def train(self) -> None:
         """ 1. evaluate learners by cv risk, save
@@ -188,9 +195,25 @@ class Lrnr_sl(Learner):
         """
         pass
 
+    def summary(self) -> None:
+        model_names = pd.DataFrame(self.lrnr_names)
+        weights = pd.DataFrame(self.wt_meta)
+        cv_risk = pd.DataFrame(self.cv_risk)
+
+        tbl = pd.concat([model_names, weights, cv_risk], axis=1)
+        tbl.columns = ['learner','weight','cv_risk']
+
+        print("="*50)
+        print(" Num. of cv folds: ", self.n_k, "\n", 
+              "Meta learner: ", self.meta, "\n",
+              "n: ", self.n, "\n",
+              "p: ", self.p)
+        print("="*50)
+        print(tbl)
+
 
 class Lrnr_glm(Learner):
-    def __init__(self, sl_task: sl_task, name = None, params = None):
+    def __init__(self, sl_task: sl_task, name = "glm", params = None):
         super().__init__(sl_task = sl_task, name = name, params = params)
         family = self.sl_task.family
         if (family == "Gaussian"):
@@ -245,7 +268,7 @@ class Lrnr_glm(Learner):
 
 class Lrnr_glmnet(Learner):
     # Lasso when L1_wt = 1, ridge when L1_wt = 0, elasticnet when L1_wt = 0.5
-    def __init__(self, sl_task: sl_task, name = None, params = [1, 1e-2]):
+    def __init__(self, sl_task: sl_task, name = "glmnet", params = [1, 1e-2]):
         super().__init__(sl_task = sl_task, name = name, params = params)
         self.L1_wt = params[0]
         self.Lambda = params[1]
@@ -296,7 +319,7 @@ class Lrnr_glmnet(Learner):
 
 
 class Lrnr_rf(Learner):
-    def __init__(self, sl_task: sl_task, name = None, params = [3, None, 2]):
+    def __init__(self, sl_task: sl_task, name = "rf", params = [3, None, 2]):
         super().__init__(sl_task = sl_task, name = name, params = params)
         self.max_depth = params[0]
         self.random_state = params[1]
@@ -358,7 +381,7 @@ class Lrnr_rf(Learner):
 
 
 class Lrnr_xgboost(Learner):
-    def __init__(self, sl_task: sl_task, num_round: int, name = None, params = [3, 1e-1, 100, 1, 1]):
+    def __init__(self, sl_task: sl_task, num_round: int, name = "xgb", params = [3, 1e-1, 100, 1, 1]):
         super().__init__(sl_task = sl_task, name = name, params = params)
         self.n_round = num_round
         self.max_depth = params[0]
