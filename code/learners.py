@@ -1,5 +1,5 @@
 
-import sl_task
+from sl_task import sl_task
 import numpy as np
 from abc import ABC, abstractmethod
 import statsmodels.api as sm
@@ -46,7 +46,7 @@ def initialize_sl(sl_task, stack, meta, name = None, params = None):
 
 
 def square_error_loss(y_hat, y):
-    return np.sum((y_hat - y)^2)/len(y)
+    return np.sum((y_hat - y)**2)/len(y)
 
 def binomial_loglik_loss(y_hat, y):
     return -np.sum(y*np.log(y_hat) + (1 - y)*np.log(1-y_hat))/len(y)

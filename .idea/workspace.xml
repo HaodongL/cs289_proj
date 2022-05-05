@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="95044379-1737-4691-9eb8-63bbfd52a52c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/data_process.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/data_process.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +28,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager">
@@ -61,7 +60,10 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="95044379-1737-4691-9eb8-63bbfd52a52c" name="Default Changelist" comment="" />
@@ -86,8 +88,24 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
-  <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/cs289_proj$test.coverage" NAME="test Coverage Results" MODIFIED="1651450096148" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/code" />
+  <component name="WindowStateProjectService">
+    <state width="1494" height="224" key="GridCell.Tab.0.bottom" timestamp="1651766520878">
+      <screen x="0" y="23" width="1536" height="937" />
+    </state>
+    <state width="1494" height="224" key="GridCell.Tab.0.bottom/0.23.1536.937@0.23.1536.937" timestamp="1651766520878" />
+    <state width="1494" height="224" key="GridCell.Tab.0.center" timestamp="1651766520877">
+      <screen x="0" y="23" width="1536" height="937" />
+    </state>
+    <state width="1494" height="224" key="GridCell.Tab.0.center/0.23.1536.937@0.23.1536.937" timestamp="1651766520877" />
+    <state width="1494" height="224" key="GridCell.Tab.0.left" timestamp="1651766520877">
+      <screen x="0" y="23" width="1536" height="937" />
+    </state>
+    <state width="1494" height="224" key="GridCell.Tab.0.left/0.23.1536.937@0.23.1536.937" timestamp="1651766520877" />
+    <state width="1494" height="224" key="GridCell.Tab.0.right" timestamp="1651766520878">
+      <screen x="0" y="23" width="1536" height="937" />
+    </state>
+    <state width="1494" height="224" key="GridCell.Tab.0.right/0.23.1536.937@0.23.1536.937" timestamp="1651766520878" />
   </component>
 </project>

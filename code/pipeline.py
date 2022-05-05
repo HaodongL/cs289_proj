@@ -1,5 +1,5 @@
 import numpy as np
-import sl_task
+from sl_task import sl_task
 from code.learners import Learner
 
 # A pipeline is a learner that chain two or more learners

@@ -1,7 +1,7 @@
 
 import numpy as np
-import code.sl_task
-from code.learners import initialize_sl, square_error_loss, binomial_loglik_loss
+from sl_task import sl_task
+from learners import initialize_sl, square_error_loss, binomial_loglik_loss
 
 
 def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):

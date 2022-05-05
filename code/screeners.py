@@ -1,6 +1,6 @@
 import numpy as np
-import code.sl_task
-from code.learners import Learner
+from sl_task import sl_task
+from learners import Learner
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2, f_regression
 
