@@ -25,10 +25,10 @@ class Pipeline(Learner):
         None
         """
         X0 = X
-        n_l = len(learners)
+        n_l = len(self.learners)
 
         for i in range(n_l):
-        	learner = learners[i]
+        	learner = self.learners[i]
         	learner.train(Y, X0)
         	X0 = learner.chain()
 
@@ -44,10 +44,10 @@ class Pipeline(Learner):
         predictons
         """
         preds = X
-        n_l = len(learners)
+        n_l = len(self.learners)
 
         for i in range(n_l):
-        	learner = learners[i]
+        	learner = self.learners[i]
         	preds = learner.predict(preds)
         	
         return preds
