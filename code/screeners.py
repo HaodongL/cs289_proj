@@ -11,7 +11,6 @@ from sklearn.feature_selection import chi2, f_regression
 class Screener(Learner):
     def __init__(self, sl_task: sl_task, name = None, params = None):
         super().__init__(sl_task = sl_task, name = name, params = params)
-        self.learners = learners   # is there an input missing as "learners"?
 
     def train(self, Y: np.ndarray, X: np.ndarray) -> None:
         """train learners sequentially
@@ -58,7 +57,7 @@ class Screener(Learner):
 
 class Screen_univar(Screener):
     # select k features based on univariate statistical tests
-    def __init__(self, sl_task: sl_task, k: int, name = None, params = None):
+    def __init__(self, sl_task: sl_task, k: int, name = "scr_uni", params = None):
         super().__init__(sl_task = sl_task, name = name, params = params)
         self.k = k
         self.X_star = None

@@ -1,6 +1,6 @@
 import numpy as np
 from sl_task import sl_task
-from code.learners import Learner
+from learners import Learner
 
 # A pipeline is a learner that chain two or more learners
 # So the output of a learner in the pipeline will be
@@ -8,7 +8,7 @@ from code.learners import Learner
 # For simplicity, here we only implement a screener pipeline with two learners
 
 class Pipeline(Learner):
-    def __init__(self, sl_task: sl_task, learners: list, name = None, params = None):
+    def __init__(self, sl_task: sl_task, learners: list, name = "pipe", params = None):
         super().__init__(sl_task = sl_task, name = name, params = params)
         self.learners = learners
 
