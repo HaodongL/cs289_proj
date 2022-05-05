@@ -396,7 +396,7 @@ class Lrnr_xgboost(Learner):
 
         self.fit_object = xgb.train(params = xgb_params, 
                                     dtrain = dtrain, 
-                                    num_round = self.n_round)
+                                    num_boost_round = self.n_round)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """predict with new X
@@ -410,7 +410,8 @@ class Lrnr_xgboost(Learner):
         predictons
         """
         fit = self.fit_object
-        preds = fit.predict(X)
+        dpred = xgb.DMatrix(data = X)
+        preds = fit.predict(dpred)
         return preds
 
     def chain(self) -> None:
