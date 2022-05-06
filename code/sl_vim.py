@@ -55,9 +55,9 @@ def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):
     cv_risk_perm = cv_risks[0:p]
     diff_risk = np.absolute(cv_risk_perm - cv_risk_true)
 
-    out = np.zeros((3, 2))
-    out[:, 1] = [1e-5, 1e-3, 1e-4]
-    out[:, 0] = np.arange(3)
+    out = np.zeros((p, 2))
+    out[:, 0] = np.arange(p)
+    out[:, 1] = diff_risk
     out = out[out[:, 1].argsort()]
     out = np.flip(out, axis = 0)
 
