@@ -179,3 +179,4 @@ class CategoricalFeatures:
     def one_hot_code(self):
         encoded_data = pd.get_dummies(self.data_obj.df.drop(self.data_obj.label_name, axis=1) )
         self.data_obj.df = pd.concat([encoded_data, self.data_obj.df[self.data_obj.label_name]], axis=1)
+        print("One hot code finished successfully.")
