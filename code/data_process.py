@@ -39,6 +39,7 @@ def data_prep_task(name: str, test_size=0.2):
         d_prep.disc_numerical.disc_to_cont()
         d_prep.cont_numerical.impute()
         # print(d_prep.cont_numerical.indicator.dtypes)
+        d_prep.categorical.one_hot_code()
 
         d_prep.standarize()
         print('Data pre-processing is finished.')
@@ -177,4 +178,4 @@ class CategoricalFeatures:
 
     def one_hot_code(self):
         encoded_data = pd.get_dummies(self.data_obj.df.drop(self.data_obj.label_name, axis=1) )
-        self.data_obj.df = pd.concat([encoded_data, self.data_obj[self.data_obj.label_name]], axis=1)
+        self.data_obj.df = pd.concat([encoded_data, self.data_obj.df[self.data_obj.label_name]], axis=1)
