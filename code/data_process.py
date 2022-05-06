@@ -25,6 +25,7 @@ def data_prep_task(name: str, test_size=0.2):
         d_prep.label_name = 'expert label'
         d_prep.drop_features(drop_cols=['y', 'x'])
         # d_prep.standardize()
+        d_prep.drop_samples()
         d_prep.y_con_to_disc()
         print('Data pre-processing is finished.')
         return d_prep.split(test_size=test_size)
@@ -107,6 +108,9 @@ class DataPreProcessing:
         else:
             self.df = self.df.drop(drop_cols, axis=1)
 
+    def drop_samples(self):
+        self.df = self.df[self.df[self.label_name] != 0]
+
 
 def load_dataframe(name: str):
     if name == 'wash':
@@ -114,7 +118,7 @@ def load_dataframe(name: str):
         family = 'Gaussian'
         return df, family
     elif name == 'cloud':
-        df = pd.read_fwf('data/cloud_data/image2.txt', header=None,
+        df = pd.read_csv('data/cloud_data/image2.txt', delim_whitespace=True, header=None,
                          names=['y', 'x', 'expert label',
                                 'NDAI', 'SD', 'CORR', 'DF', 'CF', 'BF', 'AF', 'AN'])
         family = 'Binomial'
