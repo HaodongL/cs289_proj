@@ -31,16 +31,17 @@ def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):
         sl_list.append(current_sl)
 
     # permute each col, predit on each v set
-    cv_risks = np.zeros(p)
+    cv_risks = np.zeros(p + 1)
 
-    for j in range(p):
+    for j in range(p + 1):
         X_c = np.copy(X)
-        X_c[:,j] = np.random.permutation(X[:,j])
+        if j != p:
+            X_c[:,j] = np.random.permutation(X[:,j])
         cv_preds = np.zeros(n)
 
         for i in range(K1):
-            idx_v = folds[k][1]
-            X_v = X[idx_v]
+            idx_v = folds[i][1]
+            X_v = X_c[idx_v]
             Y_v = Y[idx_v]
 
             current_sl = sl_list[i]
@@ -49,11 +50,15 @@ def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):
 
         cv_risks[j] = loss_f(cv_preds, Y.ravel())
         
-    # sort feature index by cv_risks
-    out = np.zeros(p, 2)
-    out[:, 1] = np.arange(p)
-    out[:, 2] = cv_risks
-    out = out[out[:, 2].argsort()]
+    # sort feature index by risk differences
+    cv_risk_true = cv_risks[p + 1]
+    cv_risk_perm = cv_risks[0:(p + 1)]
+    diff_risk = np.absolute(cv_risk_perm - cv_risk_true)
+
+    out = np.zeros((p, 2))
+    out[:, 0] = np.arange(p)
+    out[:, 1] = diff_risk
+    out = out[out[:, 1].argsort()]
     return out
 
 
