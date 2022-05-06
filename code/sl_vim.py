@@ -51,15 +51,20 @@ def importance(X, Y, stack, meta, family, K1 = 5, K2 = 10):
         cv_risks[j] = loss_f(cv_preds, Y.ravel())
         
     # sort feature index by risk differences
-    cv_risk_true = cv_risks[p + 1]
-    cv_risk_perm = cv_risks[0:(p + 1)]
+    cv_risk_true = cv_risks[p]
+    cv_risk_perm = cv_risks[0:p]
     diff_risk = np.absolute(cv_risk_perm - cv_risk_true)
 
-    out = np.zeros((p, 2))
-    out[:, 0] = np.arange(p)
-    out[:, 1] = diff_risk
+    out = np.zeros((3, 2))
+    out[:, 1] = [1e-5, 1e-3, 1e-4]
+    out[:, 0] = np.arange(3)
     out = out[out[:, 1].argsort()]
-    return out
+    out = np.flip(out, axis = 0)
+
+    idx_rank = out[:,0].astype(int)
+    diff_rank = out[:,1].astype(float)
+
+    return idx_rank, diff_rank
 
 
 
