@@ -25,6 +25,7 @@ def data_prep_task(name: str, test_size=0.2):
         d_prep.label_name = 'expert label'
         d_prep.drop_features(drop_cols=['y', 'x'])
         # d_prep.standardize()
+        d_prep.y_con_to_disc()
         print('Data pre-processing is finished.')
         return d_prep.split(test_size=test_size)
 
@@ -81,6 +82,11 @@ class DataPreProcessing:
     def missing_values(self):
         return self.df.isnull().sum()
 
+    def y_con_to_disc(self):
+        self.df[self.label_name] = self.df[self.label_name].astype(int)
+        print("y labels turned into int type successfully.")
+
+
     def standarize(self):
         self.df[self.get_numerical()] = pd.DataFrame(StandardScaler().fit_transform(self.df[self.get_numerical()]))
         print("Dataset is standardized.")
@@ -108,7 +114,7 @@ def load_dataframe(name: str):
         family = 'Gaussian'
         return df, family
     elif name == 'cloud':
-        df = pd.read_csv('data/cloud_data/image2.txt', sep=' ', header=None,
+        df = pd.read_fwf('data/cloud_data/image2.txt', header=None,
                          names=['y', 'x', 'expert label',
                                 'NDAI', 'SD', 'CORR', 'DF', 'CF', 'BF', 'AF', 'AN'])
         family = 'Binomial'
@@ -124,7 +130,7 @@ class ContinuousNumericalFeatures:
 
     def get_cont_num_features(self):
         return [col for col in list(self.data_obj.df.columns)
-                if self.data_obj.df[col].dtype == 'float64']
+                if self.data_obj.df[col].dtype == 'float64' and self.data_obj.label_name != col]
 
     def impute(self, strategy='median'):
         features = self.get_cont_num_features()
@@ -141,7 +147,7 @@ class DiscreteNumericalFeatures:
 
     def get_disc_num_features(self):
         return [col for col in list(self.data_obj.df.columns)
-                if self.data_obj.df[col].dtype in ['int64', 'int32']]
+                if self.data_obj.df[col].dtype in ['int64', 'int32'] and self.data_obj.label_name != col]
 
     def impute(self, strategy='most_frequent'):
         features = self.get_disc_num_features()
