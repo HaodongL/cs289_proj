@@ -9,6 +9,7 @@ from sklearn.model_selection import KFold
 from scipy.optimize import nnls
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
 import pysolnp
 import xgboost as xgb
 
@@ -51,6 +52,12 @@ def square_error_loss(y_hat, y):
 
 def binomial_loglik_loss(y_hat, y):
     return -np.sum(y*np.log(y_hat) + (1 - y)*np.log(1-y_hat))/len(y)
+
+def bound(y, bd = (1e-5, 0.9999)):
+    y = np.copy(y)
+    y[np.where(y < bd[0])] = bd[0]
+    y[np.where(y > bd[1])] = bd[1]
+    return y
 
 
 class Lrnr_sl(Learner):
@@ -178,7 +185,6 @@ class Lrnr_sl(Learner):
 
         wt = self.wt_meta
         preds =  preds @ wt
-
         return preds
 
     def chain(self) -> None:
@@ -285,8 +291,14 @@ class Lrnr_glmnet(Learner):
         -------
         None
         """
-        model = OLS(Y, X)
-        self.fit_object = model.fit_regularized(alpha = self.Lambda, L1_wt = self.L1_wt)
+        family = self.sl_task.family
+        penalty = {1 : "l1", 0: "l2", 0.5: "elasticnet"}
+        if family == "Binomial":
+            model = LogisticRegression(penalty = penalty[self.L1_wt], tol = 0.01, solver = 'saga')
+            self.fit_object = model.fit(X, Y)
+        elif family == "Gaussian":
+            model = OLS(Y, X)
+            self.fit_object = model.fit_regularized(alpha = self.Lambda, L1_wt = self.L1_wt)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """predict with new X
@@ -299,8 +311,12 @@ class Lrnr_glmnet(Learner):
         -------
         predictons
         """
+        family = self.sl_task.family
         fit = self.fit_object
-        preds = fit.predict(X)
+        if family == "Binomial":
+            preds = fit.predict_proba(X)[:,1]
+        elif family == "Gaussian":
+            preds = fit.predict(X)
         return preds
 
     def chain(self) -> None:
@@ -361,8 +377,12 @@ class Lrnr_rf(Learner):
         -------
         predictons
         """
+        family = self.sl_task.family
         fit = self.fit_object
-        preds = fit.predict(X)
+        if family == "Binomial":
+            preds = fit.predict_proba(X)[:,1]
+        elif family == "Gaussian":
+            preds = fit.predict(X)
         return preds
 
     def chain(self) -> None:
