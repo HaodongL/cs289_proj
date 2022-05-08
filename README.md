@@ -25,14 +25,15 @@ Key components of this SL:
         b). nnls (non-negative least square)
         c). solnp (Nonlinear optimization using augmented Lagrange method)
 
-    6. Pipeline
-        A pipeline is a learner compose two or more learners.
-        So the output of a learner in the pipeline will be
-        the input of the next learner.
-
-    7. Screener (with pipeline)
+    6. Screener
         a). univariate test 
         b). L1 penalization
+
+    7. Pipeline
+        A pipeline is a learner compose two or more learners.
+        So the output of a learner in the pipeline will be
+        the input of the next learner. 
+        For example, a univariate test screener followed by a xgboost can be a pipeline.
 
     8. Variable Importance
         rank features based on the change of cv risks before and after permuting each feature.
